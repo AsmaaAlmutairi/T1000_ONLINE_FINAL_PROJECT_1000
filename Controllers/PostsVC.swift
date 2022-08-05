@@ -21,6 +21,11 @@ class PostsVC: UIViewController {
         super.viewDidLoad()
         postsTableView.delegate = self
         postsTableView.dataSource = self
+        
+        //subscribing to the notification
+        NotificationCenter.default.addObserver(self, selector: #selector(userProfileTapped), name: NSNotification.Name("userStackViewTapped"), object: nil)
+        
+        
         let appId = "61bd2d5358b532c456f0e0bd"
         let url = "https://dummyapi.io/data/v1/post"
         
@@ -48,10 +53,30 @@ class PostsVC: UIViewController {
             print(data)
         }
         
-        // Do any additional setup after loading the view.
+        
+        
     }
 
-
+//MARK: ACTIONS
+    @objc func userProfileTapped(notification : Notification){
+        if let cell = notification.userInfo?["cell"] as? UITableViewCell {
+            if let indexPath = postsTableView.indexPath(for: cell) {
+                let post = posts[indexPath.row]
+                
+                let VC = storyboard?.instantiateViewController(withIdentifier: "ProfileVC") as! ProfileVC
+                VC.user = post.owner
+                present(VC, animated: true, completion: nil)
+                
+            }
+            
+        }
+            
+        let VC = storyboard?.instantiateViewController(withIdentifier: "ProfileVC") as! ProfileVC
+        present(VC, animated: true, completion: nil)
+       
+    }
+    
+    
 }
 extension PostsVC: UITableViewDelegate, UITableViewDataSource {
     

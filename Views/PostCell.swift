@@ -10,6 +10,11 @@ import UIKit
 class PostCell: UITableViewCell {
     
     
+    @IBOutlet weak var userStackView: UIStackView!{
+        didSet{
+            userStackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(userStackViewTapped)))
+        }
+    }
     @IBOutlet weak var likesNumberLabel: UILabel!
     @IBOutlet weak var backView: UIView!{
         didSet{
@@ -40,5 +45,8 @@ class PostCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-
+    //MARK: ACTIONS
+    @objc func userStackViewTapped(){
+        NotificationCenter.default.post(name: NSNotification.Name("userStackViewTapped"), object: nil, userInfo:["cell": self])
+    }
 }

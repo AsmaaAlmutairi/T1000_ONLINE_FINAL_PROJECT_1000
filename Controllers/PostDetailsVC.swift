@@ -70,6 +70,7 @@ class PostDetailsVC: UIViewController {
            
             
            
+
         }
         
     }
