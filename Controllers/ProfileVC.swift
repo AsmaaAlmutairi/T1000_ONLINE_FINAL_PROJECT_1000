@@ -6,8 +6,6 @@
 //
 
 import UIKit
-import Alamofire
-import SwiftyJSON
 
 class ProfileVC: UIViewController {
     
@@ -30,31 +28,11 @@ class ProfileVC: UIViewController {
         super.viewDidLoad()
         setupUI()
         
-
-        let appId = "61bd2d5358b532c456f0e0bd"
-        let url = "https://dummyapi.io/data/v1/user/\(user.id)"
         
-        let headers: HTTPHeaders = [
-            "app-id" : appId
-        ]
-        
-        
-        AF.request(url, headers: headers).responseJSON {  response in
-            let jsonData = JSON(response.value)
-            let decoder = JSONDecoder()
-            do {
-                self.user = try decoder.decode(User.self, from: jsonData.rawData())
-                self.setupUI()
-                
-            }catch let error{
-                print(error)
-            }
-            
-            
-           
+        UserAPI.getUserData(id: user.id) { userResponse in
+            self.user = userResponse
+            self.setupUI()
         }
-
-        
         
 
        
@@ -71,7 +49,7 @@ class ProfileVC: UIViewController {
         
         
         
-        profileImageView.setImageFromStringUrl(stringUrl: user.picture)
+        profileImageView.setImageFromStringUrl(stringUrl: user.picture!)
         
         
     }

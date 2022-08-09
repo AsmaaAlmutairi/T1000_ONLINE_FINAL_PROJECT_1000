@@ -38,7 +38,7 @@ class PostDetailsVC: UIViewController {
         userNameLabel.text = post.owner.firstName + "" + post.owner.lastName
         postTextLabel.text = post.text
         numberOfLikesLabel.text = String(post.likes)
-        userImageView.setImageFromStringUrl(stringUrl: post.owner.picture)
+        userImageView.setImageFromStringUrl(stringUrl: post.owner.picture!)
         postImageView.setImageFromStringUrl(stringUrl: post.image)
         userImageView.makeCircularImage()
 
@@ -46,32 +46,14 @@ class PostDetailsVC: UIViewController {
         /*let url = "https://dummyapi8
          .io/data/v1/post/60d21af267d0d8992e610b8d/comment"
          */
-        let url = "https://dummyapi.io/data/v1/post/\(post.id)/comment"
-
-        let appId = "61bd2d5358b532c456f0e0bd"
         
-        
-        let headers: HTTPHeaders = [
-            "app-id" : appId
-        ]
         loaderView.startAnimating()
-        AF.request(url, headers: headers).responseJSON { response in
+        PostAPI.getPostComments(id: post.id) { commentsResponse in
+            self.comments = commentsResponse
+            self.commentsTabelView.reloadData()
             self.loaderView.stopAnimating()
-            let jsonData = JSON(response.value)
-            let data = jsonData["data"]
-            
-            let decoder = JSONDecoder()
-            do {
-                self.comments = try decoder.decode([Comment].self, from: data.rawData())
-                self.commentsTabelView.reloadData()
-            }catch let error{
-                print(error)
-            }
-           
-            
-           
-
         }
+   
         
     }
     
@@ -105,7 +87,7 @@ extension PostDetailsVC: UITableViewDelegate, UITableViewDataSource{
         
         cell.commentMessageLabel.text = currentComment.message
         
-        cell.userImageView.setImageFromStringUrl(stringUrl: currentComment.owner.picture)
+        cell.userImageView.setImageFromStringUrl(stringUrl: currentComment.owner.picture!)
         
         cell.userImageView.makeCircularImage()
         

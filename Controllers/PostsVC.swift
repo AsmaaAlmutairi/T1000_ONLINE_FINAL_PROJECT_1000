@@ -6,8 +6,6 @@
 //
 
 import UIKit
-import Alamofire
-import SwiftyJSON
 import NVActivityIndicatorView
 
 class PostsVC: UIViewController {
@@ -25,35 +23,12 @@ class PostsVC: UIViewController {
         //subscribing to the notification
         NotificationCenter.default.addObserver(self, selector: #selector(userProfileTapped), name: NSNotification.Name("userStackViewTapped"), object: nil)
         
-        
-        let appId = "61bd2d5358b532c456f0e0bd"
-        let url = "https://dummyapi.io/data/v1/post"
-        
-        let headers: HTTPHeaders = [
-            "app-id" : appId
-        ]
-        
         louderView.startAnimating()
-        
-        
-        AF.request(url, headers: headers).responseJSON {  response in
+        PostAPI.getAllPosts { postsResponse in
+            self.posts = postsResponse
+            self.postsTableView.reloadData()
             self.louderView.stopAnimating()
-            let jsonData = JSON(response.value)
-            let data = jsonData["data"]
-            let decoder = JSONDecoder()
-            do {
-                self.posts = try decoder.decode([Post].self, from: data.rawData())
-                self.postsTableView.reloadData()
-            }catch let error{
-                print(error)
-            }
-            
-            
-           
-            print(data)
         }
-        
-        
         
     }
 
@@ -99,7 +74,7 @@ func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> U
     let userImageStringUrl = post.owner.picture
     cell.userImageView.makeCircularImage()
     
-    cell.userImageView.setImageFromStringUrl(stringUrl: userImageStringUrl)
+    cell.userImageView.setImageFromStringUrl(stringUrl: userImageStringUrl!)
     
     
         
